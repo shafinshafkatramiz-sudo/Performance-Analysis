@@ -160,6 +160,15 @@ export function DashboardCharts() {
                 </ResponsiveContainer>
            </div>
        </section>
+
+       <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col shrink-0">
+           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Executive Summary</h3>
+           <textarea 
+               id="pdf-summary" 
+               className="w-full border border-slate-200 dark:border-gray-700 rounded-md p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y bg-slate-50 dark:bg-gray-900 text-slate-800 dark:text-slate-200 min-h-[120px]" 
+               placeholder="Enter summary analysis for this reporting period (This will be included in the PDF export beside Visual 3)..."
+           />
+       </section>
     </div>
   );
 }

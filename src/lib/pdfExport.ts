@@ -122,22 +122,40 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       let rowY = currentY;
       let maxHeightInRow = 0;
 
+      let lastImgHeight = 0;
+
       for (let i = 0; i < chartContainers.length; i++) {
           const el = chartContainers[i] as HTMLElement;
+          const origCssText = el.style.cssText;
+          
+          // Force fixed dimensions for rendering consistency across all screens
+          el.style.width = '850px';
+          el.style.height = '480px';
+          el.style.position = 'absolute';
+          el.style.top = '0';
+          el.style.left = '0';
+          el.style.zIndex = '-999';
+          el.style.background = '#ffffff';
+
+          // Let Recharts catch the resize
+          await new Promise(r => setTimeout(r, 200));
+
           const canvasChart = await html2canvas(el, {
-              scale: 3, // higher scale for better resolution since they will be bigger
+              scale: 2, // sufficient given the 850px base width
               useCORS: true,
               logging: false,
               backgroundColor: '#ffffff'
           });
-          const imgDataChart = canvasChart.toDataURL('image/jpeg', 0.9);
+
+          // Restore normal flow
+          el.style.cssText = origCssText;
+          await new Promise(r => setTimeout(r, 50));
+
+          const imgDataChart = canvasChart.toDataURL('image/jpeg', 0.95);
           const imgHeightChart = canvasChart.height * (chartWidth / canvasChart.width);
+          lastImgHeight = imgHeightChart;
           
           let xOffset = currentX;
-          // Center the 3rd chart if it's alone on the last row
-          if (i === chartContainers.length - 1 && i % 2 === 0) {
-              xOffset = margin + (targetWidth - chartWidth) / 2;
-          }
 
           pdf.addImage(imgDataChart, 'JPEG', xOffset, rowY, chartWidth, imgHeightChart);
           
@@ -149,6 +167,31 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
               rowY += maxHeightInRow + spacing;
               maxHeightInRow = 0;
           }
+      }
+
+      // If we rendered an odd number of charts (like 3), draw the summary box to the right of the 3rd one.
+      if (chartContainers.length % 2 !== 0) {
+          const summaryText = (document.getElementById('pdf-summary') as HTMLTextAreaElement)?.value || '';
+          
+          const summaryX = currentX; 
+          const summaryHeight = lastImgHeight; // same height as the chart adjacent to it
+          
+          pdf.setFillColor(248, 250, 252); // slate-50
+          pdf.setDrawColor(226, 232, 240); // slate-200
+          pdf.setLineWidth(0.5);
+          pdf.roundedRect(summaryX, rowY, chartWidth, summaryHeight, 2, 2, 'FD');
+
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(10);
+          pdf.setTextColor(100, 116, 139); // slate-500
+          pdf.text('EXECUTIVE SUMMARY', summaryX + 5, rowY + 8);
+
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(9);
+          pdf.setTextColor(51, 65, 85); // slate-700
+          
+          const splitText = pdf.splitTextToSize(summaryText, chartWidth - 10);
+          pdf.text(splitText, summaryX + 5, rowY + 14);
       }
   } else {
       // Original fallback if the classes are somehow missing
