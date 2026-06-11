@@ -144,7 +144,20 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
               scale: 2, // sufficient given the 850px base width
               useCORS: true,
               logging: false,
-              backgroundColor: '#ffffff'
+              backgroundColor: '#ffffff',
+              onclone: (clonedDoc) => {
+                  const texts = clonedDoc.querySelectorAll('text');
+                  texts.forEach(t => {
+                      t.setAttribute('fill', '#0f172a');
+                      t.style.fill = '#0f172a';
+                      t.style.fontWeight = 'bold';
+                  });
+                  const lines = clonedDoc.querySelectorAll('.recharts-cartesian-grid line, .recharts-cartesian-axis-line');
+                  lines.forEach(l => {
+                      l.setAttribute('stroke', '#64748b');
+                      l.style.stroke = '#64748b';
+                  });
+              }
           });
 
           // Restore normal flow
@@ -183,12 +196,12 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
           pdf.setFont('helvetica', 'bold');
           pdf.setFontSize(10);
-          pdf.setTextColor(100, 116, 139); // slate-500
+          pdf.setTextColor(0, 0, 0); 
           pdf.text('EXECUTIVE SUMMARY', summaryX + 5, rowY + 8);
 
           pdf.setFont('helvetica', 'normal');
           pdf.setFontSize(9);
-          pdf.setTextColor(51, 65, 85); // slate-700
+          pdf.setTextColor(0, 0, 0); 
           
           const splitText = pdf.splitTextToSize(summaryText, chartWidth - 10);
           pdf.text(splitText, summaryX + 5, rowY + 14);
