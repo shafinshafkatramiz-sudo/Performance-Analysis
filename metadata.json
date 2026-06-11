@@ -1,0 +1,6 @@
+{
+  "name": "Microfinance Performance Dashboard",
+  "description": "Automated Microfinance Performance Dashboard that intelligently parses uploaded .xlsx files to generate analytical tables and quarter-end charts with dynamic currency conversion and PDF exports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
