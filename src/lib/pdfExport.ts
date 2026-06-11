@@ -21,7 +21,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 10;
+  const margin = 8;
   const targetWidth = pageWidth - (margin * 2);
   
   // Footer helper
@@ -45,25 +45,25 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   pdf.text(`Performance Report as of ${latestMonth}`, pageWidth / 2, margin + 12, { align: 'center' });
 
   // 2. Generate Tables using autoTable
-  let currentY = margin + 20;
+  let currentY = margin + 18;
 
   // Table 1
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(11);
   pdf.setTextColor(100);
   pdf.text('TABLE 1: FINANCIAL OUTCOMES', margin, currentY);
-  currentY += 4;
+  currentY += 3;
   
   autoTable(pdf, {
       html: '#table1-pdf',
       startY: currentY,
       theme: 'grid',
-      styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 9, cellPadding: 1.2, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin, right: margin, bottom: margin }
   });
   
-  currentY = (pdf as any).lastAutoTable.finalY + 8;
+  currentY = (pdf as any).lastAutoTable.finalY + 6;
 
   // Check if we need space for next two tables alongside each other,
   // Actually autoTable draws tables. If we want them side-by-side, we can use `margin` and `tableWidth`.
@@ -86,13 +86,13 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 9, cellPadding: 1.2, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin, right: margin + halfWidth + 5, bottom: margin }
   });
 
   const table2FinalPage = pdf.getCurrentPageInfo().pageNumber;
-  const table2FinalY = (pdf as any).lastAutoTable.finalY + 8;
+  const table2FinalY = (pdf as any).lastAutoTable.finalY;
 
   // Restore the starting page context before drawing Table 3
   pdf.setPage(startPageNumForTables);
@@ -103,13 +103,13 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 9, cellPadding: 1.2, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin + halfWidth + 5, right: margin, bottom: margin }
   });
 
   const table3FinalPage = pdf.getCurrentPageInfo().pageNumber;
-  const table3FinalY = (pdf as any).lastAutoTable.finalY + 8;
+  const table3FinalY = (pdf as any).lastAutoTable.finalY + 6;
 
   // Fast forward to the deepest page and calculate currentY
   const finalPage = Math.max(table2FinalPage, table3FinalPage);
