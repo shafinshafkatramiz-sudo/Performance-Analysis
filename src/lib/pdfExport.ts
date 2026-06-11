@@ -77,9 +77,13 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   pdf.text('TABLE 3: PRODUCT COMPOSITION', margin + halfWidth + 5, currentY);
   currentY += 3;
 
+  const table2And3StartY = Math.max(currentY, (pdf as any).lastAutoTable.finalY || currentY);
+  const startPageNumForTables = pdf.getCurrentPageInfo().pageNumber;
+
+  // Render Table 2 on the left side
   autoTable(pdf, {
       html: '#table2-pdf',
-      startY: currentY,
+      startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
       styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
@@ -87,15 +91,32 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       margin: { left: margin, right: margin + halfWidth + 5 }
   });
 
+  const table2FinalPage = pdf.getCurrentPageInfo().pageNumber;
+  const table2FinalY = (pdf as any).lastAutoTable.finalY + 8;
+
+  // Restore the starting page context before drawing Table 3
+  pdf.setPage(startPageNumForTables);
+
+  // Render Table 3 on the right side
   autoTable(pdf, {
       html: '#table3-pdf',
-      startY: currentY,
+      startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
       styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin + halfWidth + 5, right: margin }
   });
+
+  const table3FinalPage = pdf.getCurrentPageInfo().pageNumber;
+  const table3FinalY = (pdf as any).lastAutoTable.finalY + 8;
+
+  // Fast forward to the deepest page and calculate currentY
+  const finalPage = Math.max(table2FinalPage, table3FinalPage);
+  pdf.setPage(finalPage);
+  currentY = finalPage === table2FinalPage && finalPage === table3FinalPage
+      ? Math.max(table2FinalY, table3FinalY)
+      : (finalPage === table2FinalPage ? table2FinalY : table3FinalY);
 
   addFooter(pdf);
 

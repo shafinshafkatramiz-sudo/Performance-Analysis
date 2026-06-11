@@ -114,26 +114,26 @@ export function DashboardCharts() {
        
        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
        <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
-           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 1: Cumulative Loan Disbursed</h3>
+           <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 1: Cumulative Loan Disbursed</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
-                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
-                        <YAxis yAxisId="left" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
-                        <YAxis yAxisId="right" orientation="right" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${(val/1000).toFixed(1)}k`} />
+                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
+                        <YAxis yAxisId="left" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
+                        <YAxis yAxisId="right" orientation="right" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${(val/1000).toFixed(1)}k`} />
                         <Tooltip 
                             formatter={(value: number, name: string) => {
                                 if (name === 'Cm. Amount (USD)') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
                                 return new Intl.NumberFormat('en-US').format(value);
                             }} 
                         />
-                        <Legend wrapperStyle={{ fontSize: '10px' }}/>
+                        <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold' }}/>
                         <Bar isAnimationActive={false} yAxisId="left" dataKey="totalDisbursedCumAmount" name="Cm. Amount (USD)" fill={colors.primary} radius={[4,4,0,0]} maxBarSize={40}>
-                            <LabelList dataKey="totalDisbursedCumAmount" position="insideTop" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#fff" fontSize={9} fontWeight="bold"/>
+                            <LabelList dataKey="totalDisbursedCumAmount" position="insideTop" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#fff" fontSize={11} fontWeight="bold"/>
                         </Bar>
                         <Line isAnimationActive={false} yAxisId="right" type="monotone" dataKey="totalDisbursedCumCount" name="Cm. Count" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }}>
-                            <LabelList dataKey="totalDisbursedCumCount" position="top" formatter={(val: number) => `${(val/1000).toFixed(1)}k`} fill="#3b82f6" fontSize={10} fontWeight="bold"/>
+                            <LabelList dataKey="totalDisbursedCumCount" position="top" formatter={(val: number) => `${(val/1000).toFixed(1)}k`} fill="#3b82f6" fontSize={11} fontWeight="bold"/>
                         </Line>
                     </ComposedChart>
                 </ResponsiveContainer>
@@ -141,18 +141,18 @@ export function DashboardCharts() {
        </section>
 
        <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
-           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 2: Risk Trend (PAR{'>'}30 %)</h3>
+           <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 2: Risk Trend (PAR{'>'}30 %)</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
-                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
-                        <YAxis tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${val.toFixed(1)}%`} />
+                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
+                        <YAxis tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${val.toFixed(1)}%`} />
                         <Tooltip formatter={(value: number) => `${value.toFixed(2)}%`} />
-                        <Legend wrapperStyle={{ fontSize: '10px' }}/>
-                        <ReferenceLine y={2.0} stroke="red" strokeDasharray="3 3" label={{ position: 'top', value: '2.0% Threshold', fill: 'red', fontSize: 10, fontWeight: 'bold' }} />
+                        <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold' }}/>
+                        <ReferenceLine y={2.0} stroke="red" strokeDasharray="3 3" label={{ position: 'top', value: '2.0% Threshold', fill: 'red', fontSize: 12, fontWeight: 'bold' }} />
                         <Line isAnimationActive={false} type="monotone" dataKey="par30" name="PAR>30%" stroke={colors.primary} strokeWidth={2} dot={{ r: 4, fill: colors.primary }} activeDot={{ r: 6 }}>
-                            <LabelList dataKey="par30" position="top" formatter={(val: number) => `${val.toFixed(2)}%`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                            <LabelList dataKey="par30" position="top" formatter={(val: number) => `${val.toFixed(2)}%`} fill={colors.text} fontSize={12} fontWeight="bold"/>
                         </Line>
                     </ComposedChart>
                 </ResponsiveContainer>
@@ -160,24 +160,24 @@ export function DashboardCharts() {
        </section>
 
        <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
-           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 3: Product Mix SML vs SEL</h3>
+           <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 3: Product Mix SML vs SEL</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
-                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
-                        <YAxis tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${Math.round(val)}%`} domain={[0, 100]} />
+                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
+                        <YAxis tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${Math.round(val)}%`} domain={[0, 100]} />
                         <Tooltip formatter={(value: number, name: string, props: any) => {
                             const rawOutstanding = name === 'Microcredit (SML)' ? props.payload.smlOutstanding : props.payload.selOutstanding;
                             const formattedCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(rawOutstanding);
                             return `${value}% (${formattedCurrency})`;
                         }} />
-                        <Legend wrapperStyle={{ fontSize: '10px' }}/>
+                        <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold' }}/>
                         <Bar isAnimationActive={false} dataKey="smlPercent" name="Microcredit (SML)" stackId="a" fill={colors.primary} maxBarSize={60}>
-                            <LabelList dataKey="smlPercent" position="inside" formatter={(val: number) => `${val}%`} fill="#ffffff" fontSize={10} fontWeight="bold"/>
+                            <LabelList dataKey="smlPercent" position="inside" formatter={(val: number) => `${val}%`} fill="#ffffff" fontSize={11} fontWeight="bold"/>
                         </Bar>
                         <Bar isAnimationActive={false} dataKey="selPercent" name="Microenterprise (SEL)" stackId="a" fill={colors.secondary} radius={[4,4,0,0]} maxBarSize={60}>
-                            <LabelList dataKey="selPercent" position="inside" formatter={(val: number) => `${val}%`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                            <LabelList dataKey="selPercent" position="inside" formatter={(val: number) => `${val}%`} fill={colors.text} fontSize={11} fontWeight="bold"/>
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
@@ -185,20 +185,20 @@ export function DashboardCharts() {
        </section>
 
        <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
-           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 4: New vs Repeat Loan Disbursed</h3>
+           <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 4: New vs Repeat Loan Disbursed</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
-                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
-                        <YAxis tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
+                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
+                        <YAxis tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
                         <Tooltip formatter={(value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)} />
-                        <Legend wrapperStyle={{ fontSize: '10px' }}/>
+                        <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold' }}/>
                         <Bar isAnimationActive={false} dataKey="newLoanAmount" name="New Loan Amount" fill={colors.primary} maxBarSize={30}>
-                            <LabelList dataKey="newLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                            <LabelList dataKey="newLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={11} fontWeight="bold"/>
                         </Bar>
                         <Bar isAnimationActive={false} dataKey="repeatLoanAmount" name="Repeat Loan Amount" fill={colors.secondary} maxBarSize={30}>
-                            <LabelList dataKey="repeatLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                            <LabelList dataKey="repeatLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={11} fontWeight="bold"/>
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
