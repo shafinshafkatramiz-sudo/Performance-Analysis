@@ -58,12 +58,12 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       html: '#table1-pdf',
       startY: currentY,
       theme: 'grid',
-      styles: { fontSize: 8, cellPadding: 2, textColor: [50, 50, 50] },
-      headStyles: { fillColor: [240, 240, 240], textColor: [50, 50, 50], fontStyle: 'bold' },
+      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin, right: margin }
   });
   
-  currentY = (pdf as any).lastAutoTable.finalY + 10;
+  currentY = (pdf as any).lastAutoTable.finalY + 8;
 
   // Check if we need space for next two tables alongside each other,
   // Actually autoTable draws tables. If we want them side-by-side, we can use `margin` and `tableWidth`.
@@ -72,29 +72,28 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(10);
+  pdf.setTextColor(0, 0, 0);
   pdf.text('TABLE 2: OPERATIONAL EFFICIENCY', margin, currentY);
   pdf.text('TABLE 3: PRODUCT COMPOSITION', margin + halfWidth + 5, currentY);
-  currentY += 4;
+  currentY += 3;
 
   autoTable(pdf, {
       html: '#table2-pdf',
       startY: currentY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 8, cellPadding: 2, textColor: [50, 50, 50] },
-      headStyles: { fillColor: [240, 240, 240], textColor: [50, 50, 50], fontStyle: 'bold' },
+      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin, right: margin + halfWidth + 5 }
   });
-
-  const table2FinalY = (pdf as any).lastAutoTable.finalY;
 
   autoTable(pdf, {
       html: '#table3-pdf',
       startY: currentY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 8, cellPadding: 2, textColor: [50, 50, 50] },
-      headStyles: { fillColor: [240, 240, 240], textColor: [50, 50, 50], fontStyle: 'bold' },
+      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin + halfWidth + 5, right: margin }
   });
 
