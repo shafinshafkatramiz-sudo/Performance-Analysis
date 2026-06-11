@@ -35,12 +35,12 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   // 1. Title
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(16);
+  pdf.setFontSize(18);
   pdf.setTextColor(0, 76, 151); // SAJIDA Blue
   pdf.text('SAJIDA MICROFINANCE LIMITED', pageWidth / 2, margin + 5, { align: 'center' });
   
   pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(12);
+  pdf.setFontSize(14);
   pdf.setTextColor(100);
   pdf.text(`Performance Report as of ${latestMonth}`, pageWidth / 2, margin + 12, { align: 'center' });
 
@@ -49,7 +49,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   // Table 1
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(10);
+  pdf.setFontSize(11);
   pdf.setTextColor(100);
   pdf.text('TABLE 1: FINANCIAL OUTCOMES', margin, currentY);
   currentY += 4;
@@ -58,7 +58,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       html: '#table1-pdf',
       startY: currentY,
       theme: 'grid',
-      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin, right: margin }
   });
@@ -71,7 +71,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   const halfWidth = (pageWidth - (margin * 2) - 5) / 2;
 
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(10);
+  pdf.setFontSize(11);
   pdf.setTextColor(0, 0, 0);
   pdf.text('TABLE 2: OPERATIONAL EFFICIENCY', margin, currentY);
   pdf.text('TABLE 3: PRODUCT COMPOSITION', margin + halfWidth + 5, currentY);
@@ -82,7 +82,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: currentY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin, right: margin + halfWidth + 5 }
   });
@@ -92,7 +92,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: currentY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
       margin: { left: margin + halfWidth + 5, right: margin }
   });
@@ -105,7 +105,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   
   // Title for charts page maybe? 
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(14);
+  pdf.setFontSize(16);
   pdf.setTextColor(0, 76, 151);
   pdf.text('Visual Analysis', margin, currentY + 5);
   currentY += 10;
@@ -149,13 +149,13 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
                   const texts = clonedDoc.querySelectorAll('text');
                   texts.forEach(t => {
                       t.setAttribute('fill', '#0f172a');
-                      t.style.fill = '#0f172a';
-                      t.style.fontWeight = 'bold';
+                      (t as any).style.fill = '#0f172a';
+                      (t as any).style.fontWeight = 'bold';
                   });
                   const lines = clonedDoc.querySelectorAll('.recharts-cartesian-grid line, .recharts-cartesian-axis-line');
                   lines.forEach(l => {
                       l.setAttribute('stroke', '#64748b');
-                      l.style.stroke = '#64748b';
+                      (l as any).style.stroke = '#64748b';
                   });
               }
           });
@@ -180,31 +180,6 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
               rowY += maxHeightInRow + spacing;
               maxHeightInRow = 0;
           }
-      }
-
-      // If we rendered an odd number of charts (like 3), draw the summary box to the right of the 3rd one.
-      if (chartContainers.length % 2 !== 0) {
-          const summaryText = (document.getElementById('pdf-summary') as HTMLTextAreaElement)?.value || '';
-          
-          const summaryX = currentX; 
-          const summaryHeight = lastImgHeight; // same height as the chart adjacent to it
-          
-          pdf.setFillColor(248, 250, 252); // slate-50
-          pdf.setDrawColor(226, 232, 240); // slate-200
-          pdf.setLineWidth(0.5);
-          pdf.roundedRect(summaryX, rowY, chartWidth, summaryHeight, 2, 2, 'FD');
-
-          pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(10);
-          pdf.setTextColor(0, 0, 0); 
-          pdf.text('EXECUTIVE SUMMARY', summaryX + 5, rowY + 8);
-
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(9);
-          pdf.setTextColor(0, 0, 0); 
-          
-          const splitText = pdf.splitTextToSize(summaryText, chartWidth - 10);
-          pdf.text(splitText, summaryX + 5, rowY + 14);
       }
   } else {
       // Original fallback if the classes are somehow missing

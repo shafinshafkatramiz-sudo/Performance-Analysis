@@ -31,6 +31,9 @@ export function DashboardCharts() {
   const smlOutstandingRow = extractRow(rows, 'Group', ['Total Outstanding', 'Outstanding Balance'], data.mapping?.['Total Outstanding']);
   const selOutstandingRow = extractRow(rows, 'Enterprise', ['Total Outstanding', 'Outstanding Balance'], data.mapping?.['Total Outstanding']);
 
+  const newLoanDisbursedAmountRow = extractRow(rows, 'Total', [['loan', 'disbursed', 'new', 'amount'], ['amountofloandisbursed', 'new']], data.mapping?.['Amount of New Loan Disbursed']);
+  const totalLoanDisbursedAmountRow = extractRow(rows, 'Total', [['loan', 'disbursed', 'total', 'amount'], ['amountofloandisbursed', 'total']], data.mapping?.['Total Amount of Loan Disbursed']);
+
   const chartData = displayMonths.map(month => {
     // raw values
     const totOutRaw = totalOutstandingRow ? parseFloat(String(totalOutstandingRow[month]).replace(/,/g, '')) : 0;
@@ -46,14 +49,29 @@ export function DashboardCharts() {
     const smlOutRaw = smlOutstandingRow ? parseFloat(String(smlOutstandingRow[month]).replace(/,/g, '')) : 0;
     const selOutRaw = selOutstandingRow ? parseFloat(String(selOutstandingRow[month]).replace(/,/g, '')) : 0;
 
+    const newLoanAmountRaw = newLoanDisbursedAmountRow ? parseFloat(String(newLoanDisbursedAmountRow[month]).replace(/,/g, '')) : 0;
+    const totalLoanAmountRaw = totalLoanDisbursedAmountRow ? parseFloat(String(totalLoanDisbursedAmountRow[month]).replace(/,/g, '')) : 0;
+    const repeatLoanAmountRaw = totalLoanAmountRaw - newLoanAmountRaw;
+
+    const smlOutCalculated = Math.round((smlOutRaw || 0) / exchangeRate);
+    const selOutCalculated = Math.round((selOutRaw || 0) / exchangeRate);
+    const totalMixRaw = smlOutCalculated + selOutCalculated;
+    
+    const smlPercent = totalMixRaw > 0 ? Number(((smlOutCalculated / totalMixRaw) * 100).toFixed(1)) : 0;
+    const selPercent = totalMixRaw > 0 ? Number(((selOutCalculated / totalMixRaw) * 100).toFixed(1)) : 0;
+
     return {
         month,
         totalOutstanding: Math.round((totOutRaw || 0) / exchangeRate),
         totalDisbursedCumAmount: Math.round((totDisbCumAmountRaw || 0) / exchangeRate),
         totalDisbursedCumCount: totDisbCumCountRaw || 0,
         par30: par30Final,
-        smlOutstanding: Math.round((smlOutRaw || 0) / exchangeRate),
-        selOutstanding: Math.round((selOutRaw || 0) / exchangeRate),
+        smlOutstanding: smlOutCalculated,
+        selOutstanding: selOutCalculated,
+        smlPercent,
+        selPercent,
+        newLoanAmount: Math.round((newLoanAmountRaw || 0) / exchangeRate),
+        repeatLoanAmount: Math.round((repeatLoanAmountRaw || 0) / exchangeRate),
     }
   });
 
@@ -94,6 +112,7 @@ export function DashboardCharts() {
        <div className="pdf-page-break before:block before:h-8 hidden"></div>
        <h2 className="text-[11px] font-bold uppercase text-slate-400 dark:text-gray-400 px-2 print-show hidden">Quarter-End Analysis</h2>
        
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
        <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
            <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 1: Cumulative Loan Disbursed</h3>
            <div className="flex-1 w-full">
@@ -147,28 +166,45 @@ export function DashboardCharts() {
                     <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
-                        <YAxis tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
-                        <Tooltip formatter={(value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)} />
+                        <YAxis tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${Math.round(val)}%`} domain={[0, 100]} />
+                        <Tooltip formatter={(value: number, name: string, props: any) => {
+                            const rawOutstanding = name === 'Microcredit (SML)' ? props.payload.smlOutstanding : props.payload.selOutstanding;
+                            const formattedCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(rawOutstanding);
+                            return `${value}% (${formattedCurrency})`;
+                        }} />
                         <Legend wrapperStyle={{ fontSize: '10px' }}/>
-                        <Bar isAnimationActive={false} dataKey="smlOutstanding" name="Microcredit (SML)" stackId="a" fill={colors.primary} maxBarSize={60}>
-                            <LabelList dataKey="smlOutstanding" position="inside" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#ffffff" fontSize={10} fontWeight="bold"/>
+                        <Bar isAnimationActive={false} dataKey="smlPercent" name="Microcredit (SML)" stackId="a" fill={colors.primary} maxBarSize={60}>
+                            <LabelList dataKey="smlPercent" position="inside" formatter={(val: number) => `${val}%`} fill="#ffffff" fontSize={10} fontWeight="bold"/>
                         </Bar>
-                        <Bar isAnimationActive={false} dataKey="selOutstanding" name="Microenterprise (SEL)" stackId="a" fill={colors.secondary} radius={[4,4,0,0]} maxBarSize={60}>
-                            <LabelList dataKey="selOutstanding" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                        <Bar isAnimationActive={false} dataKey="selPercent" name="Microenterprise (SEL)" stackId="a" fill={colors.secondary} radius={[4,4,0,0]} maxBarSize={60}>
+                            <LabelList dataKey="selPercent" position="inside" formatter={(val: number) => `${val}%`} fill={colors.text} fontSize={10} fontWeight="bold"/>
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
            </div>
        </section>
 
-       <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col shrink-0">
-           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Executive Summary</h3>
-           <textarea 
-               id="pdf-summary" 
-               className="w-full border border-slate-200 dark:border-gray-700 rounded-md p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y bg-slate-50 dark:bg-gray-900 text-slate-800 dark:text-slate-200 min-h-[120px]" 
-               placeholder="Enter summary analysis for this reporting period (This will be included in the PDF export beside Visual 3)..."
-           />
+       <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
+           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 4: New vs Repeat Loan Disbursed</h3>
+           <div className="flex-1 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
+                        <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
+                        <YAxis tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
+                        <Tooltip formatter={(value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)} />
+                        <Legend wrapperStyle={{ fontSize: '10px' }}/>
+                        <Bar isAnimationActive={false} dataKey="newLoanAmount" name="New Loan Amount" fill={colors.primary} maxBarSize={30}>
+                            <LabelList dataKey="newLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                        </Bar>
+                        <Bar isAnimationActive={false} dataKey="repeatLoanAmount" name="Repeat Loan Amount" fill={colors.secondary} maxBarSize={30}>
+                            <LabelList dataKey="repeatLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={10} fontWeight="bold"/>
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+           </div>
        </section>
+       </div>
     </div>
   );
 }
