@@ -52,16 +52,25 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   });
 
   const imgDataTables = canvasTables.toDataURL('image/png');
-  // Target width is page width minus margins
   const targetWidth = pageWidth - (margin * 2);
   const scaleRatioTables = targetWidth / canvasTables.width;
-  const imgHeightTables = canvasTables.height * scaleRatioTables;
+  let imgHeightTables = canvasTables.height * scaleRatioTables;
 
   let currentY = margin + 20;
 
-  // Wait, if tables are very long, they might exceed page height. But usually 3 simple tables fit in landscape A4 if scaled.
-  // We'll just place it. If it overflows, it might be cropped. A4 height is 210mm. Y is already ~30. Room left is ~170mm.
-  pdf.addImage(imgDataTables, 'PNG', margin, currentY, targetWidth, imgHeightTables);
+  // Make sure tables fit on the page without vertical scrolling/cropping
+  const maxAvailHeightTables = pageHeight - currentY - 15; // 15 to leave room for footer
+  let adjustedWidthTables = targetWidth;
+
+  if (imgHeightTables > maxAvailHeightTables) {
+      const heightRatio = maxAvailHeightTables / imgHeightTables;
+      imgHeightTables = maxAvailHeightTables;
+      adjustedWidthTables = adjustedWidthTables * heightRatio;
+  }
+
+  const xOffsetTables = margin + (targetWidth - adjustedWidthTables) / 2;
+
+  pdf.addImage(imgDataTables, 'PNG', xOffsetTables, currentY, adjustedWidthTables, imgHeightTables);
   addFooter(pdf);
 
   // 3. Page Break for Charts
@@ -77,32 +86,84 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   // Hide the charts heading momentarily for cleaner capture if needed, but it's fine
   // Capture Charts
-  const canvasCharts = await html2canvas(chartsContainer, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: '#ffffff'
-  });
+  const chartContainers = document.querySelectorAll('.chart-container');
+  
+  if (chartContainers.length === 3) {
+      // Specifically handle our 3 charts side-by-side
+      const spacing = 5; // mm
+      const chartWidth = (targetWidth - (spacing * 2)) / 3;
+      let currentX = margin;
 
-  const imgDataCharts = canvasCharts.toDataURL('image/png');
-  const scaleRatioCharts = targetWidth / canvasCharts.width;
-  let imgHeightCharts = canvasCharts.height * scaleRatioCharts;
+      for (let i = 0; i < chartContainers.length; i++) {
+          const el = chartContainers[i] as HTMLElement;
+          const canvasChart = await html2canvas(el, {
+              scale: 2,
+              useCORS: true,
+              logging: false,
+              backgroundColor: '#ffffff'
+          });
+          const imgDataChart = canvasChart.toDataURL('image/png');
+          const imgHeightChart = canvasChart.height * (chartWidth / canvasChart.width);
+          
+          pdf.addImage(imgDataChart, 'PNG', currentX, currentY, chartWidth, imgHeightChart);
+          currentX += chartWidth + spacing;
+      }
+  } else if (chartContainers.length > 0) {
+      // Fallback for general case side-by-side
+      const spacing = 5;
+      const chartWidth = (targetWidth - spacing) / 2;
+      let currentX = margin;
+      let rowY = currentY;
+      let maxHeightInRow = 0;
 
-  // Make sure charts fit on the page without vertical scrolling/cropping
-  const maxAvailHeight = pageHeight - currentY - 10;
-  let adjustedWidth = targetWidth;
+      for (let i = 0; i < chartContainers.length; i++) {
+          const el = chartContainers[i] as HTMLElement;
+          const canvasChart = await html2canvas(el, {
+              scale: 2,
+              useCORS: true,
+              logging: false,
+              backgroundColor: '#ffffff'
+          });
+          const imgDataChart = canvasChart.toDataURL('image/png');
+          const imgHeightChart = canvasChart.height * (chartWidth / canvasChart.width);
+          
+          pdf.addImage(imgDataChart, 'PNG', currentX, rowY, chartWidth, imgHeightChart);
+          
+          if (imgHeightChart > maxHeightInRow) maxHeightInRow = imgHeightChart;
+          
+          currentX += chartWidth + spacing;
+          if ((i + 1) % 2 === 0) { // wrap every 2
+              currentX = margin;
+              rowY += maxHeightInRow + spacing;
+              maxHeightInRow = 0;
+          }
+      }
+  } else {
+      // Original fallback if the classes are somehow missing
+      const canvasCharts = await html2canvas(chartsContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
 
-  if (imgHeightCharts > maxAvailHeight) {
-      // Scale down proportionally to fit the height
-      const heightRatio = maxAvailHeight / imgHeightCharts;
-      imgHeightCharts = maxAvailHeight;
-      adjustedWidth = adjustedWidth * heightRatio;
+      const imgDataCharts = canvasCharts.toDataURL('image/png');
+      const scaleRatioCharts = targetWidth / canvasCharts.width;
+      let imgHeightCharts = canvasCharts.height * scaleRatioCharts;
+
+      const maxAvailHeight = pageHeight - currentY - 10;
+      let adjustedWidth = targetWidth;
+
+      if (imgHeightCharts > maxAvailHeight) {
+          const heightRatio = maxAvailHeight / imgHeightCharts;
+          imgHeightCharts = maxAvailHeight;
+          adjustedWidth = adjustedWidth * heightRatio;
+      }
+
+      const xOffset = margin + (targetWidth - adjustedWidth) / 2;
+      pdf.addImage(imgDataCharts, 'PNG', xOffset, currentY, adjustedWidth, imgHeightCharts);
   }
 
-  // Center horizontally if we scaled down width
-  const xOffset = margin + (targetWidth - adjustedWidth) / 2;
-
-  pdf.addImage(imgDataCharts, 'PNG', xOffset, currentY, adjustedWidth, imgHeightCharts);
   addFooter(pdf);
 
   pdf.save(`SAJIDA_Performance_Report_${latestMonth}.pdf`);

@@ -23,8 +23,9 @@ export function DashboardCharts() {
 
   // Extract necessary rows
   const totalOutstandingRow = extractRow(rows, 'Total', ['Total Outstanding', 'Outstanding Balance'], data.mapping?.['Total Outstanding']);
-  const amountOfTotalODRow = extractRow(rows, 'Total', ['Amount of Total OD', ['total', 'od', 'amount'], ['amount', 'total', 'od'], 'total od', 'overdue', ['amount', 'overdue'], ['total', 'od']], data.mapping?.['Amount of Total OD']);
-  const totalAmountDisbursedRow = extractRow(rows, 'Total', [['loan', 'disbursed', 'total', 'amount'], ['amountofloandisbursed', 'total']], data.mapping?.['Total Amount of Loan Disbursed']);
+  const totalAmountDisbursedCumRow = extractRow(rows, 'Total', [['loan', 'disbursed', 'amount', 'year'], ['loan', 'disbursed', 'amount', 'cum'], ['amountofloandisbursed', 'yeartodate'], ['amountofloandisbursed', 'cumulative']], data.mapping?.['Amount of Loan Disbursed (Cumulative till Date)']);
+  const totalLoanDisbursedCumRow = extractRow(rows, 'Total', [['loan', 'disbursed', 'year', 'no'], ['loan', 'disbursed', 'cum', 'no'], ['noofloandisbursed', 'yeartodate'], ['noofloandisbursed', 'cumulative']], data.mapping?.['Loan Disbursed (Cumulative till Date)']);
+  
   const par30Row = extractRow(rows, 'Total', ['PAR>30', 'PAR > 30', 'PAR 30'], data.mapping?.['PAR>30']);
   
   const smlOutstandingRow = extractRow(rows, 'Group', ['Total Outstanding', 'Outstanding Balance'], data.mapping?.['Total Outstanding']);
@@ -33,8 +34,8 @@ export function DashboardCharts() {
   const chartData = displayMonths.map(month => {
     // raw values
     const totOutRaw = totalOutstandingRow ? parseFloat(String(totalOutstandingRow[month]).replace(/,/g, '')) : 0;
-    const totalODRaw = amountOfTotalODRow ? parseFloat(String(amountOfTotalODRow[month]).replace(/,/g, '')) : 0;
-    const totDisbRaw = totalAmountDisbursedRow ? parseFloat(String(totalAmountDisbursedRow[month]).replace(/,/g, '')) : 0;
+    const totDisbCumAmountRaw = totalAmountDisbursedCumRow ? parseFloat(String(totalAmountDisbursedCumRow[month]).replace(/,/g, '')) : 0;
+    const totDisbCumCountRaw = totalLoanDisbursedCumRow ? parseFloat(String(totalLoanDisbursedCumRow[month]).replace(/,/g, '')) : 0;
     
     const par30RawStr = String(par30Row ? par30Row[month] : '0');
     const isPar30PercentStr = par30RawStr.includes('%');
@@ -48,8 +49,8 @@ export function DashboardCharts() {
     return {
         month,
         totalOutstanding: Math.round((totOutRaw || 0) / exchangeRate),
-        amountOfTotalOD: Math.round((totalODRaw || 0) / exchangeRate),
-        totalDisbursed: Math.round((totDisbRaw || 0) / exchangeRate),
+        totalDisbursedCumAmount: Math.round((totDisbCumAmountRaw || 0) / exchangeRate),
+        totalDisbursedCumCount: totDisbCumCountRaw || 0,
         par30: par30Final,
         smlOutstanding: Math.round((smlOutRaw || 0) / exchangeRate),
         selOutstanding: Math.round((selOutRaw || 0) / exchangeRate),
@@ -94,18 +95,23 @@ export function DashboardCharts() {
        <h2 className="text-[11px] font-bold uppercase text-slate-400 dark:text-gray-400 px-2 print-show hidden">Quarter-End Analysis</h2>
        
        <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 p-3 flex flex-col h-[240px] shrink-0 chart-container">
-           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 1: Overdue vs Outstanding (USD)</h3>
+           <h3 className="text-[10px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 1: Cumulative Loan Disbursed</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} />
                         <YAxis yAxisId="left" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
-                        <YAxis yAxisId="right" orientation="right" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} />
-                        <Tooltip formatter={(value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)} />
+                        <YAxis yAxisId="right" orientation="right" tick={{ fill: colors.text, fontSize: 10 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${(val/1000).toFixed(1)}k`} />
+                        <Tooltip 
+                            formatter={(value: number, name: string) => {
+                                if (name === 'Cm. Amount (USD)') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+                                return new Intl.NumberFormat('en-US').format(value);
+                            }} 
+                        />
                         <Legend wrapperStyle={{ fontSize: '10px' }}/>
-                        <Bar yAxisId="left" dataKey="totalOutstanding" name="Total Outstanding" fill={colors.primary} radius={[4,4,0,0]} maxBarSize={40} />
-                        <Line yAxisId="right" type="monotone" dataKey="amountOfTotalOD" name="Overdue (OD)" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                        <Bar yAxisId="left" dataKey="totalDisbursedCumAmount" name="Cm. Amount (USD)" fill={colors.primary} radius={[4,4,0,0]} maxBarSize={40} />
+                        <Line yAxisId="right" type="monotone" dataKey="totalDisbursedCumCount" name="Cm. Count" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                     </ComposedChart>
                 </ResponsiveContainer>
            </div>
