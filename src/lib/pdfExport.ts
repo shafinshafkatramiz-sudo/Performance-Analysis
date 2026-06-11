@@ -1,15 +1,15 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export async function generatePDF(exchangeRate: number, latestMonth: string) {
   // Wait a little for any animations or state updates to settle
   await new Promise(resolve => setTimeout(resolve, 100));
 
-  const tablesContainer = document.getElementById('dashboard-tables');
   const chartsContainer = document.getElementById('dashboard-charts');
 
-  if (!tablesContainer || !chartsContainer) {
-    throw new Error('Dashboard containers not found');
+  if (!chartsContainer) {
+    throw new Error('Dashboard charts container not found');
   }
 
   // Create A4 Landscape PDF
@@ -22,6 +22,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 10;
+  const targetWidth = pageWidth - (margin * 2);
   
   // Footer helper
   const addFooter = (doc: jsPDF) => {
@@ -43,34 +44,60 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   pdf.setTextColor(100);
   pdf.text(`Performance Report as of ${latestMonth}`, pageWidth / 2, margin + 12, { align: 'center' });
 
-  // 2. Capture Tables
-  const canvasTables = await html2canvas(tablesContainer, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: '#ffffff' // Force white background for PDF
-  });
-
-  const imgDataTables = canvasTables.toDataURL('image/png');
-  const targetWidth = pageWidth - (margin * 2);
-  const scaleRatioTables = targetWidth / canvasTables.width;
-  let imgHeightTables = canvasTables.height * scaleRatioTables;
-
+  // 2. Generate Tables using autoTable
   let currentY = margin + 20;
 
-  // Make sure tables fit on the page without vertical scrolling/cropping
-  const maxAvailHeightTables = pageHeight - currentY - 15; // 15 to leave room for footer
-  let adjustedWidthTables = targetWidth;
+  // Table 1
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(10);
+  pdf.setTextColor(100);
+  pdf.text('TABLE 1: FINANCIAL OUTCOMES', margin, currentY);
+  currentY += 4;
+  
+  autoTable(pdf, {
+      html: '#table1-pdf',
+      startY: currentY,
+      theme: 'grid',
+      styles: { fontSize: 8, cellPadding: 2, textColor: [50, 50, 50] },
+      headStyles: { fillColor: [240, 240, 240], textColor: [50, 50, 50], fontStyle: 'bold' },
+      margin: { left: margin, right: margin }
+  });
+  
+  currentY = (pdf as any).lastAutoTable.finalY + 10;
 
-  if (imgHeightTables > maxAvailHeightTables) {
-      const heightRatio = maxAvailHeightTables / imgHeightTables;
-      imgHeightTables = maxAvailHeightTables;
-      adjustedWidthTables = adjustedWidthTables * heightRatio;
-  }
+  // Check if we need space for next two tables alongside each other,
+  // Actually autoTable draws tables. If we want them side-by-side, we can use `margin` and `tableWidth`.
+  // Half width
+  const halfWidth = (pageWidth - (margin * 2) - 5) / 2;
 
-  const xOffsetTables = margin + (targetWidth - adjustedWidthTables) / 2;
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(10);
+  pdf.text('TABLE 2: OPERATIONAL EFFICIENCY', margin, currentY);
+  pdf.text('TABLE 3: PRODUCT COMPOSITION', margin + halfWidth + 5, currentY);
+  currentY += 4;
 
-  pdf.addImage(imgDataTables, 'PNG', xOffsetTables, currentY, adjustedWidthTables, imgHeightTables);
+  autoTable(pdf, {
+      html: '#table2-pdf',
+      startY: currentY,
+      theme: 'grid',
+      tableWidth: halfWidth,
+      styles: { fontSize: 8, cellPadding: 2, textColor: [50, 50, 50] },
+      headStyles: { fillColor: [240, 240, 240], textColor: [50, 50, 50], fontStyle: 'bold' },
+      margin: { left: margin, right: margin + halfWidth + 5 }
+  });
+
+  const table2FinalY = (pdf as any).lastAutoTable.finalY;
+
+  autoTable(pdf, {
+      html: '#table3-pdf',
+      startY: currentY,
+      theme: 'grid',
+      tableWidth: halfWidth,
+      styles: { fontSize: 8, cellPadding: 2, textColor: [50, 50, 50] },
+      headStyles: { fillColor: [240, 240, 240], textColor: [50, 50, 50], fontStyle: 'bold' },
+      margin: { left: margin + halfWidth + 5, right: margin }
+  });
+
   addFooter(pdf);
 
   // 3. Page Break for Charts
@@ -88,29 +115,9 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   // Capture Charts
   const chartContainers = document.querySelectorAll('.chart-container');
   
-  if (chartContainers.length === 3) {
-      // Specifically handle our 3 charts side-by-side
-      const spacing = 5; // mm
-      const chartWidth = (targetWidth - (spacing * 2)) / 3;
-      let currentX = margin;
-
-      for (let i = 0; i < chartContainers.length; i++) {
-          const el = chartContainers[i] as HTMLElement;
-          const canvasChart = await html2canvas(el, {
-              scale: 2,
-              useCORS: true,
-              logging: false,
-              backgroundColor: '#ffffff'
-          });
-          const imgDataChart = canvasChart.toDataURL('image/png');
-          const imgHeightChart = canvasChart.height * (chartWidth / canvasChart.width);
-          
-          pdf.addImage(imgDataChart, 'PNG', currentX, currentY, chartWidth, imgHeightChart);
-          currentX += chartWidth + spacing;
-      }
-  } else if (chartContainers.length > 0) {
-      // Fallback for general case side-by-side
-      const spacing = 5;
+  if (chartContainers.length > 0) {
+      // 2 charts side-by-side
+      const spacing = 10;
       const chartWidth = (targetWidth - spacing) / 2;
       let currentX = margin;
       let rowY = currentY;
@@ -119,15 +126,21 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       for (let i = 0; i < chartContainers.length; i++) {
           const el = chartContainers[i] as HTMLElement;
           const canvasChart = await html2canvas(el, {
-              scale: 2,
+              scale: 3, // higher scale for better resolution since they will be bigger
               useCORS: true,
               logging: false,
               backgroundColor: '#ffffff'
           });
-          const imgDataChart = canvasChart.toDataURL('image/png');
+          const imgDataChart = canvasChart.toDataURL('image/jpeg', 0.9);
           const imgHeightChart = canvasChart.height * (chartWidth / canvasChart.width);
           
-          pdf.addImage(imgDataChart, 'PNG', currentX, rowY, chartWidth, imgHeightChart);
+          let xOffset = currentX;
+          // Center the 3rd chart if it's alone on the last row
+          if (i === chartContainers.length - 1 && i % 2 === 0) {
+              xOffset = margin + (targetWidth - chartWidth) / 2;
+          }
+
+          pdf.addImage(imgDataChart, 'JPEG', xOffset, rowY, chartWidth, imgHeightChart);
           
           if (imgHeightChart > maxHeightInRow) maxHeightInRow = imgHeightChart;
           

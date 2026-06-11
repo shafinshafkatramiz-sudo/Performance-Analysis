@@ -16,7 +16,8 @@ export function DashboardTables() {
   // Render Table helper
   const renderTable = (
     title: string,
-    mappings: { destLabel: string; searchKeys: (string | string[])[]; type: 'usd' | 'count' | 'percent' | 'percentMultiplied', groupKey?: string }[]
+    mappings: { destLabel: string; searchKeys: (string | string[])[]; type: 'usd' | 'count' | 'percent' | 'percentMultiplied', groupKey?: string }[],
+    id: string
   ) => {
     return (
       <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 flex flex-col shrink-0 table-container">
@@ -26,7 +27,7 @@ export function DashboardTables() {
           </h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[11px] border-collapse">
+          <table id={id} className="w-full text-left text-[11px] border-collapse">
             <thead className="bg-white dark:bg-gray-800 sticky top-0 z-10">
               <tr className="border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900">
                 <th className="p-2 font-semibold text-slate-700 dark:text-gray-300">Indicator Metric</th>
@@ -108,7 +109,7 @@ export function DashboardTables() {
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-[11px] border-collapse">
+            <table id="table3-pdf" className="w-full text-left text-[11px] border-collapse">
               <thead className="bg-white dark:bg-gray-800 sticky top-0 z-10">
                 <tr className="border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900">
                   <th className="p-2 font-semibold text-slate-700 dark:text-gray-300">Indicator Metric</th>
@@ -171,9 +172,9 @@ export function DashboardTables() {
 
   return (
     <div className="flex flex-col gap-3" id="dashboard-tables">
-      {renderTable('Table 1: Financial Outcomes', table1Mappings)}
+      {renderTable('Table 1: Financial Outcomes', table1Mappings, 'table1-pdf')}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
-        {renderTable('Table 2: Operational Efficiency', table2Mappings)}
+        {renderTable('Table 2: Operational Efficiency', table2Mappings, 'table2-pdf')}
         {renderTable3()}
       </div>
     </div>
