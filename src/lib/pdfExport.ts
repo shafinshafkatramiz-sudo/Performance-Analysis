@@ -60,7 +60,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       theme: 'grid',
       styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
-      margin: { left: margin, right: margin }
+      margin: { left: margin, right: margin, bottom: margin }
   });
   
   currentY = (pdf as any).lastAutoTable.finalY + 8;
@@ -88,7 +88,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       tableWidth: halfWidth,
       styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
-      margin: { left: margin, right: margin + halfWidth + 5 }
+      margin: { left: margin, right: margin + halfWidth + 5, bottom: margin }
   });
 
   const table2FinalPage = pdf.getCurrentPageInfo().pageNumber;
@@ -105,7 +105,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       tableWidth: halfWidth,
       styles: { fontSize: 9.5, cellPadding: 1.5, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
-      margin: { left: margin + halfWidth + 5, right: margin }
+      margin: { left: margin + halfWidth + 5, right: margin, bottom: margin }
   });
 
   const table3FinalPage = pdf.getCurrentPageInfo().pageNumber;

@@ -117,7 +117,7 @@ export function DashboardCharts() {
            <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 1: Cumulative Loan Disbursed</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <ComposedChart data={chartData} margin={{ top: 25, right: 10, bottom: 5, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
                         <YAxis yAxisId="left" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
@@ -144,7 +144,7 @@ export function DashboardCharts() {
            <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 2: Risk Trend (PAR{'>'}30 %)</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <ComposedChart data={chartData} margin={{ top: 25, right: 10, bottom: 5, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
                         <YAxis tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${val.toFixed(1)}%`} />
@@ -163,7 +163,7 @@ export function DashboardCharts() {
            <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 3: Product Mix SML vs SEL</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <BarChart data={chartData} margin={{ top: 25, right: 10, bottom: 5, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
                         <YAxis tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `${Math.round(val)}%`} domain={[0, 100]} />
@@ -188,7 +188,7 @@ export function DashboardCharts() {
            <h3 className="text-[12px] font-bold uppercase text-slate-400 dark:text-gray-400 mb-2">Visual 4: New vs Repeat Loan Disbursed</h3>
            <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <BarChart data={chartData} margin={{ top: 25, right: 10, bottom: 5, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} />
                         <YAxis tick={{ fill: colors.text, fontSize: 12 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
