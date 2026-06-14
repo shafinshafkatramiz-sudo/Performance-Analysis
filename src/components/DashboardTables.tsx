@@ -29,10 +29,10 @@ export function DashboardTables() {
         <div className="overflow-x-auto">
           <table id={id} className="w-full text-left text-sm border-collapse">
             <thead className="bg-white dark:bg-gray-800 sticky top-0 z-10">
-              <tr className="border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900">
-                <th className="p-2 font-semibold text-slate-700 dark:text-gray-300">Indicator Metric</th>
+              <tr className="bg-[#0f3c6e] text-white">
+                <th className="p-2 font-semibold">Indicator Metric</th>
                 {recentMonths.map((m, i) => (
-                  <th key={m} className={`p-2 text-right whitespace-nowrap ${i === recentMonths.length - 1 ? 'font-bold text-slate-800 dark:text-gray-200' : 'opacity-60 italic text-slate-600 dark:text-gray-400'}`}>
+                  <th key={m} className={`p-2 text-right whitespace-nowrap ${i === recentMonths.length - 1 ? 'font-bold' : 'opacity-80 italic'}`}>
                     <div>{m}</div>
                     <div className="text-xs font-normal opacity-70">
                       {/(mar|jun|sep|dec)/i.test(m) ? '(Quarter Ended)' : '(Month Ended)'}
@@ -114,10 +114,10 @@ export function DashboardTables() {
           <div className="overflow-x-auto">
             <table id="table3-pdf" className="w-full text-left text-sm border-collapse">
               <thead className="bg-white dark:bg-gray-800 sticky top-0 z-10">
-                <tr className="border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900">
-                  <th className="p-2 font-semibold text-slate-700 dark:text-gray-300">Indicator Metric</th>
+                <tr className="bg-[#0f3c6e] text-white">
+                  <th className="p-2 font-semibold">Indicator Metric</th>
                   {recentMonths.map((m, i) => (
-                    <th key={m} className={`p-2 text-right whitespace-nowrap ${i === recentMonths.length - 1 ? 'font-bold text-slate-800 dark:text-gray-200' : 'opacity-60 italic text-slate-600 dark:text-gray-400'}`}>
+                    <th key={m} className={`p-2 text-right whitespace-nowrap ${i === recentMonths.length - 1 ? 'font-bold' : 'opacity-80 italic'}`}>
                       <div>{m}</div>
                       <div className="text-xs font-normal opacity-70">
                         {/(mar|jun|sep|dec)/i.test(m) ? '(Quarter Ended)' : '(Month Ended)'}

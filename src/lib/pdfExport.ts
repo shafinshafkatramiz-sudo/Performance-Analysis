@@ -50,7 +50,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   // Table 1
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(10);
-  pdf.setTextColor(100);
+  pdf.setTextColor(15, 60, 110);
   pdf.text('TABLE 1: FINANCIAL OUTCOMES', margin, currentY);
   currentY += 3;
   
@@ -59,7 +59,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: currentY,
       theme: 'grid',
       styles: { fontSize: 7.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7.5 },
+      headStyles: { fillColor: [15, 60, 110], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7.5 },
       margin: { left: margin, right: margin, bottom: margin },
       rowPageBreak: 'avoid'
   });
@@ -73,7 +73,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(10);
-  pdf.setTextColor(0, 0, 0);
+  pdf.setTextColor(15, 60, 110);
   pdf.text('TABLE 2: OPERATIONAL EFFICIENCY', margin, currentY);
   pdf.text('TABLE 3: PRODUCT COMPOSITION', margin + halfWidth + 5, currentY);
   currentY += 3;
@@ -88,7 +88,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       theme: 'grid',
       tableWidth: halfWidth,
       styles: { fontSize: 7.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7.5 },
+      headStyles: { fillColor: [15, 60, 110], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7.5 },
       margin: { left: margin, right: margin + halfWidth + 5, bottom: margin },
       rowPageBreak: 'avoid'
   });
@@ -106,7 +106,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       theme: 'grid',
       tableWidth: halfWidth,
       styles: { fontSize: 7.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7.5 },
+      headStyles: { fillColor: [15, 60, 110], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7.5 },
       margin: { left: margin + halfWidth + 5, right: margin, bottom: margin },
       rowPageBreak: 'avoid'
   });
