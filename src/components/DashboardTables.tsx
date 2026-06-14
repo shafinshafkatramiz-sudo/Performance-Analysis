@@ -22,18 +22,21 @@ export function DashboardTables() {
     return (
       <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 flex flex-col shrink-0 table-container">
         <div className="px-4 py-2 bg-slate-50 dark:bg-gray-900 border-b border-slate-200 dark:border-gray-700 flex justify-between items-center">
-          <h2 className="text-[11px] font-bold uppercase text-slate-500 dark:text-gray-400">
+          <h2 className="text-base font-bold uppercase text-black dark:text-white">
             {title}
           </h2>
         </div>
         <div className="overflow-x-auto">
-          <table id={id} className="w-full text-left text-[11px] border-collapse">
+          <table id={id} className="w-full text-left text-sm border-collapse">
             <thead className="bg-white dark:bg-gray-800 sticky top-0 z-10">
               <tr className="border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900">
                 <th className="p-2 font-semibold text-slate-700 dark:text-gray-300">Indicator Metric</th>
                 {recentMonths.map((m, i) => (
                   <th key={m} className={`p-2 text-right ${i === recentMonths.length - 1 ? 'font-bold text-slate-800 dark:text-gray-200' : 'opacity-60 italic text-slate-600 dark:text-gray-400'}`}>
-                    {m}
+                    <div>{m}</div>
+                    <div className="text-xs font-normal opacity-70">
+                      {/(mar|jun|sep|dec)/i.test(m) ? '(Quarter Ended)' : '(Month Ended)'}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -104,18 +107,21 @@ export function DashboardTables() {
       return (
         <section className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-slate-200 dark:border-gray-700 flex flex-col shrink-0 table-container">
           <div className="px-4 py-2 bg-slate-50 dark:bg-gray-900 border-b border-slate-200 dark:border-gray-700 flex justify-between items-center">
-            <h2 className="text-[11px] font-bold uppercase text-slate-500 dark:text-gray-400">
+            <h2 className="text-base font-bold uppercase text-black dark:text-white">
               Table 3: Product Composition
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table id="table3-pdf" className="w-full text-left text-[11px] border-collapse">
+            <table id="table3-pdf" className="w-full text-left text-sm border-collapse">
               <thead className="bg-white dark:bg-gray-800 sticky top-0 z-10">
                 <tr className="border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900">
                   <th className="p-2 font-semibold text-slate-700 dark:text-gray-300">Indicator Metric</th>
                   {recentMonths.map((m, i) => (
                     <th key={m} className={`p-2 text-right ${i === recentMonths.length - 1 ? 'font-bold text-slate-800 dark:text-gray-200' : 'opacity-60 italic text-slate-600 dark:text-gray-400'}`}>
-                      {m}
+                      <div>{m}</div>
+                      <div className="text-xs font-normal opacity-70">
+                        {/(mar|jun|sep|dec)/i.test(m) ? '(Quarter Ended)' : '(Month Ended)'}
+                      </div>
                     </th>
                   ))}
                 </tr>
