@@ -130,10 +130,10 @@ export function DashboardCharts() {
                         />
                         <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 'bold' }}/>
                         <Bar isAnimationActive={false} yAxisId="left" dataKey="totalDisbursedCumAmount" name="Cm. Amount (USD)" fill={colors.primary} radius={[4,4,0,0]} maxBarSize={40}>
-                            <LabelList dataKey="totalDisbursedCumAmount" position="insideTop" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#fff" fontSize={14} fontWeight="bold"/>
+                            <LabelList dataKey="totalDisbursedCumAmount" position="insideTop" dy={8} formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#fff" fontSize={14} fontWeight="bold"/>
                         </Bar>
                         <Line isAnimationActive={false} yAxisId="right" type="monotone" dataKey="totalDisbursedCumCount" name="Cm. Count" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }}>
-                            <LabelList dataKey="totalDisbursedCumCount" position="top" formatter={(val: number) => `${(val/1000).toFixed(1)}k`} fill="#3b82f6" fontSize={14} fontWeight="bold"/>
+                            <LabelList dataKey="totalDisbursedCumCount" position="top" dy={-8} formatter={(val: number) => `${(val/1000).toFixed(1)}k`} fill="#3b82f6" fontSize={14} fontWeight="bold"/>
                         </Line>
                     </ComposedChart>
                 </ResponsiveContainer>

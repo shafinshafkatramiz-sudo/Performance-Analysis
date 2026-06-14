@@ -58,9 +58,10 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       html: '#table1-pdf',
       startY: currentY,
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 1.2, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 8.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
-      margin: { left: margin, right: margin, bottom: margin }
+      margin: { left: margin, right: margin, bottom: margin },
+      rowPageBreak: 'avoid'
   });
   
   currentY = (pdf as any).lastAutoTable.finalY + 6;
@@ -86,9 +87,10 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 9, cellPadding: 1.2, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 8.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
-      margin: { left: margin, right: margin + halfWidth + 5, bottom: margin }
+      margin: { left: margin, right: margin + halfWidth + 5, bottom: margin },
+      rowPageBreak: 'avoid'
   });
 
   const table2FinalPage = pdf.getCurrentPageInfo().pageNumber;
@@ -103,9 +105,10 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 9, cellPadding: 1.2, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      styles: { fontSize: 8.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
       headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
-      margin: { left: margin + halfWidth + 5, right: margin, bottom: margin }
+      margin: { left: margin + halfWidth + 5, right: margin, bottom: margin },
+      rowPageBreak: 'avoid'
   });
 
   const table3FinalPage = pdf.getCurrentPageInfo().pageNumber;
