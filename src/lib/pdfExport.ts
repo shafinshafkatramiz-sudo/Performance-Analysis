@@ -49,7 +49,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
   // Table 1
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(11);
+  pdf.setFontSize(10);
   pdf.setTextColor(100);
   pdf.text('TABLE 1: FINANCIAL OUTCOMES', margin, currentY);
   currentY += 3;
@@ -58,8 +58,8 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       html: '#table1-pdf',
       startY: currentY,
       theme: 'grid',
-      styles: { fontSize: 8.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+      styles: { fontSize: 7.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7.5 },
       margin: { left: margin, right: margin, bottom: margin },
       rowPageBreak: 'avoid'
   });
@@ -72,7 +72,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
   const halfWidth = (pageWidth - (margin * 2) - 5) / 2;
 
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(11);
+  pdf.setFontSize(10);
   pdf.setTextColor(0, 0, 0);
   pdf.text('TABLE 2: OPERATIONAL EFFICIENCY', margin, currentY);
   pdf.text('TABLE 3: PRODUCT COMPOSITION', margin + halfWidth + 5, currentY);
@@ -87,8 +87,8 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 8.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+      styles: { fontSize: 7.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7.5 },
       margin: { left: margin, right: margin + halfWidth + 5, bottom: margin },
       rowPageBreak: 'avoid'
   });
@@ -105,8 +105,8 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
       startY: table2And3StartY,
       theme: 'grid',
       tableWidth: halfWidth,
-      styles: { fontSize: 8.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+      styles: { fontSize: 7.5, cellPadding: 0.8, textColor: [0, 0, 0], lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7.5 },
       margin: { left: margin + halfWidth + 5, right: margin, bottom: margin },
       rowPageBreak: 'avoid'
   });
@@ -162,6 +162,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
           el.style.background = '#ffffff';
 
           // Let Recharts catch the resize
+          window.dispatchEvent(new Event('resize'));
           await new Promise(r => setTimeout(r, 200));
 
           const canvasChart = await html2canvas(el, {
@@ -186,6 +187,7 @@ export async function generatePDF(exchangeRate: number, latestMonth: string) {
 
           // Restore normal flow
           el.style.cssText = origCssText;
+          window.dispatchEvent(new Event('resize'));
           await new Promise(r => setTimeout(r, 50));
 
           const imgDataChart = canvasChart.toDataURL('image/jpeg', 0.95);

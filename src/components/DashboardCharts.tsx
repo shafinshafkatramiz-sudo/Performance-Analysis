@@ -130,10 +130,10 @@ export function DashboardCharts() {
                         />
                         <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 'bold' }}/>
                         <Bar isAnimationActive={false} yAxisId="left" dataKey="totalDisbursedCumAmount" name="Cm. Amount (USD)" fill={colors.primary} radius={[4,4,0,0]} maxBarSize={40}>
-                            <LabelList dataKey="totalDisbursedCumAmount" position="insideTop" dy={8} formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#fff" fontSize={14} fontWeight="bold"/>
+                            <LabelList dataKey="totalDisbursedCumAmount" position="center" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill="#fff" fontSize={14} fontWeight="bold"/>
                         </Bar>
                         <Line isAnimationActive={false} yAxisId="right" type="monotone" dataKey="totalDisbursedCumCount" name="Cm. Count" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }}>
-                            <LabelList dataKey="totalDisbursedCumCount" position="top" dy={-8} formatter={(val: number) => `${(val/1000).toFixed(1)}k`} fill="#3b82f6" fontSize={14} fontWeight="bold"/>
+                            <LabelList dataKey="totalDisbursedCumCount" position="top" formatter={(val: number) => `${(val/1000).toFixed(1)}k`} fill="#3b82f6" fontSize={14} fontWeight="bold"/>
                         </Line>
                     </ComposedChart>
                 </ResponsiveContainer>
@@ -191,14 +191,14 @@ export function DashboardCharts() {
                     <BarChart data={chartData} margin={{ top: 25, right: 10, bottom: 5, left: -20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                         <XAxis dataKey="month" tick={{ fill: colors.text, fontSize: 14 }} axisLine={{ stroke: colors.grid }} />
-                        <YAxis tick={{ fill: colors.text, fontSize: 14 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} />
+                        <YAxis tick={{ fill: colors.text, fontSize: 14 }} axisLine={{ stroke: colors.grid }} tickFormatter={(val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val)} />
                         <Tooltip formatter={(value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)} />
                         <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 'bold' }}/>
                         <Bar isAnimationActive={false} dataKey="newLoanAmount" name="New Loan Amount" fill={colors.primary} maxBarSize={30}>
-                            <LabelList dataKey="newLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={14} fontWeight="bold"/>
+                            <LabelList dataKey="newLoanAmount" position="top" formatter={(val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val)} fill={colors.text} fontSize={14} fontWeight="bold"/>
                         </Bar>
                         <Bar isAnimationActive={false} dataKey="repeatLoanAmount" name="Repeat Loan Amount" fill={colors.secondary} maxBarSize={30}>
-                            <LabelList dataKey="repeatLoanAmount" position="top" formatter={(val: number) => `$${(val/1000000).toFixed(1)}M`} fill={colors.text} fontSize={14} fontWeight="bold"/>
+                            <LabelList dataKey="repeatLoanAmount" position="top" formatter={(val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val)} fill={colors.text} fontSize={14} fontWeight="bold"/>
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
